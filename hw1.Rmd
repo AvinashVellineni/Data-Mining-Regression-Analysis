@@ -1,0 +1,384 @@
+---
+title: "CS 422 Section 01"
+output: html_notebook
+author: "Avinash Vellineni"
+---
+
+Problem 2.1:
+
+a) Load the college data set.
+
+```{r}
+setwd("E:/IIT CHICAGO STUDIES/IIT Chicago semester 2/Data Mining/Assignments/Assignment1")
+college <- read.csv("College.csv", sep = ",", header = T)
+```
+
+b) First column in the data set shouldn't be treated as a data.
+
+```{r}
+rownames(college) <- college[,1]
+fix(college)
+college <- college[,-1]
+fix(college)
+```
+
+
+c)
+
+i)Use the summary() function to produce a numerical summary of the variables in the data set.
+
+```{r}
+summary(college)
+```
+
+ii)Use the pairs() function to produce a scatterplot matrix of the first ten columns or variables of the data. Recall that you can reference the first ten columns of a matrix A using A[,1:10] 
+
+```{r}
+library(psych)
+pairs(college[,1:10])
+```
+
+
+iii)Use the boxplot() function to produce side-by-side boxplots that help answers the following question:  Which alumni donate more to their colleges --- those who go to public schools or those who go to private schools?
+
+Private University alumini donate more than Public university alumini.
+
+```{r}
+boxplot(perc.alumni~Private, data=college,main="Private/Public University Vs perc of alumini donation",xlab="Private/Public University",ylab="Percentage Of Alumini Donation")
+```
+
+iv)Use the boxplot() function to produce side-by-side boxplots that help answers the following question:  Which colleges --public or private --- employ more Ph.D.’s?
+
+Public university has more PhD's employed.
+
+```{r}
+boxplot(PhD~Private,data=college,xlab="Private/Public University",ylab="Percentage of faculty with PHD's",main="Private/Public University Vs % of PHD's")
+```
+
+
+V)Create a new qualitative variable, called Elite by binning the Top10perc variable. We are going to divide universities into two groups based on whether or not the proportion of students coming from the top 10 % of their high school classes exceeds 50 %.
+
+
+```{r}
+Elite <- rep("No", nrow(college))
+Elite[college$Top10perc >50] <- "Yes"
+Elite <- as.factor(Elite)
+college <- data.frame(college,Elite)
+```
+
+```{r}
+summary(college$Elite)
+```
+
+```{r}
+plot(college$Elite,college$Outstate,xlab="Elite University",ylab="Out of State Tuition", main="Outstate Vs Elite")
+```
+
+vi) Use the hist() function to produce some histograms with differing numbers of bins for a few of the quantitative variables. You may find the command par(mfrow=c(2,2)) useful: it will divide the print window into four regions so that four plots can be made simultaneously. Modifying the arguments to this function will divide the screen in other ways
+
+```{r}
+par(mfrow=c(2,2))
+hist(college$Apps,xlab = "Apps", main="College_Apps")
+hist(college$Enroll, xlab = "Enroll", main="College_Enroll")
+hist(college$perc.alumni, xlab ="Percentage of alumni", main="College_perc.alumni")
+hist(college$Expend, xlab ="Expend", main="College_Expend")
+```
+vii) 
+Summary Of the data:
+ 1.From the plot Outstate Vs Private we can see that Public universities has less out of state tuition than Private universities.
+ 
+```{r}
+plot(college$Private,college$Outstate,xlab="Private/Public Universities",ylab="Outstae",main="Public/Private University Vs Outstate")
+```
+ 
+ 2.From the plot Outstate Vs Elite universities  Elite universities have more out of state tuition than the non-Elite universities.
+ 
+```{r}
+plot(college$Elite,college$Outstate,xlab="Elite",ylab="Outstate",main="Elite Vs Outstate")
+```
+ 
+ 
+3.If the out of state tuition increases Graduation rate  also increases.
+
+```{r}
+plot(college$Outstate, college$Grad.Rate,xlab = "Out of State Tuition",ylab = "Graduation Rate", main="Outstate Vs Graduation Rate")
+```
+
+4.Public Universities has more number of students enrolled than the private universities.
+
+```{r}
+plot(college$Private,college$Enroll,xlab="Private/Public University",ylab="# of students enrolled.", main="Private VS Enroll")
+```
+
+5. Public universities have more percent of faculty with Phd's.
+
+```{r}
+plot(college$Private,college$PhD,xlab="Private/Public University",ylab="Phd", main="Private Vs Phd")
+```
+
+6. Public universities have more Student/Faculty Ratio than Private Universities.
+
+```{r}
+plot(college$Private,college$S.F.Ratio,xlab="Private/Public University",ylab="Student/Faculty Ratio", main="Private Vs S.F.Ratio")
+```
+
+7. New Students from top 10% of the high school class dosen't have high graduation rate.
+
+```{r}
+plot(college$Top10perc, college$Grad.Rate,xlab="Students From top 10% of High Scchool", ylab = "College Graduation Rate", main = "Top10Perc Vs Graduation Rate")
+```
+
+8.Private universities have higher No of Students accepted to enrolled ratio.
+
+```{r}
+plot(college$Private,college$Accept/college$Enroll,xlab="Private/Public University", ylab="Accept/Enroll Ratio", main="Private Vs Accept/Enroll Ratio ")
+```
+
+9. Gratuation Rate in Private Universities are higher than the Public Universities. 
+
+```{r}
+plot(college$Private,college$Grad.Rate,xlab="Private/Public University",ylab="Grduation Rate",main="Private Vs Graduation Rate")
+```
+
+10. Public universities have higher number of Full-time and Part-time Undergraduates than private universities.
+
+```{r}
+plot(college$Private,college$F.Undergrad,xlab="Private/Public universities",ylab="Full Time Undergraduates", main="Private Vs F.undergrad")
+plot(college$Private,college$P.Undergrad,xlab="Private/Public universities",ylab="Part Time Undergraduates", main="Private Vs P.undergrad")
+```
+
+11.Public university students spends more for their personal needs.
+
+```{r}
+plot(college$Private,college$Personal,xlab="Private/Public universities",ylab="Personal Spending",main="Private Vs Personal Spending")
+```
+
+12. Higher the Instructonal expenditure per student higher the graduation rate. Also most of the universities have less than $20000 as their Instructional expenditure. 
+
+```{r}
+plot(college$Expend,college$Grad.Rate,xlab = "Instructional expenditure per Student", ylab = "Graduation Rate" , main="Expend Vs Graduation Rate")
+```
+
+13. Alumini of Private Universities donate more than the Alumini of Public universities.
+
+```{r}
+plot(college$Private,college$perc.alumni,xlab="Private/Public universities",ylab="Percentage of Alumini who donates.",main="Private Vs Percentage of alumini donations.")
+```
+
+Problem 2.2:
+
+a)
+
+Linear Regression:
+
+```{r}
+setwd("E:/IIT CHICAGO STUDIES/IIT Chicago semester 2/Data Mining/Assignments/Assignment1")
+Nba_df <- read.csv("nba.csv",header = TRUE,sep=",")
+head(Nba_df)
+```
+
+```{r}
+# Finding predictor with strong correlation with the PTS variable
+Strong_corr <- suppressWarnings(cor(cbind(Nba_df$SEASON,Nba_df$DATE,Nba_df$PLAYER.FULLNAME,Nba_df$POSITION,Nba_df$OWNTEAM,Nba_df$OPPTEAM,Nba_df$VENUE,Nba_df$MIN,Nba_df$FG,Nba_df$FGA,Nba_df$X3P,Nba_df$X3PA,Nba_df$FT,Nba_df$FTA,Nba_df$OR,Nba_df$DR,Nba_df$TOT,Nba_df$A,Nba_df$PF,Nba_df$ST,Nba_df$TO,Nba_df$BL,Nba_df$PTS)))
+Strong_corr[,23]
+```
+
+```{r}
+#Graph containing the correlations
+library(psych)
+pairs.panels(Nba_df[,c(8:14,23)])
+
+```
+
+```{r}
+#Priting the selected Predictor
+choosen_column <- colnames(Nba_df[9])
+cat(paste("The selected predictor is : ",choosen_column))
+```
+
+```{r}
+#Correlation Plot
+Cor_Plot <- Nba_df[,c(9,23)]
+plot(Cor_Plot$FG,Cor_Plot$PTS,xlab = "Field Goals",ylab = "Points Scored",main="Field Goals Vs Points Scored")
+pairs.panels(Cor_Plot)
+```
+
+```{r}
+#linear regression model
+Linear_Reg_model <- lm(PTS ~ FG, data=Nba_df)
+summary(Linear_Reg_model)
+```
+
+```{r}
+anova(Linear_Reg_model)
+```
+
+```{r}
+plot(Linear_Reg_model,1)
+```
+
+
+How well the model fits the data?
+
+1. Here Beta_1 = 2.55 . So there is atleast one Predictor helpful in predicting the response and here Probability is vey low (2e-16) which state that Predictor is strongly correlated with the response.
+
+2. Here Beta_1 is positive, So increase in Fg value has a positive effect on PTS(response).
+
+3. Here we are able to capture 91.6% of the variance using this value as the R square value is 0.9163.
+
+4. Since the F-statistic value is 2936 > 1 here n= 269 observations so the model is good.
+
+5.  Two statistics tells us how well the model fits the data sample RSE and R^2. Form the anova command we can see that FG predictor has high variance. Here RSE = 2.241 and R Square vaule is 0.916.
+
+6. From the residual plot we can infer that data points are equally shared above and below the regression line.
+
+
+b)
+
+```{r}
+#X-Y Plot of predictor and the regressor.
+plot(Nba_df$FG,Nba_df$PTS,xlab = "Field Goals",ylab = "Points Scored",main="Field Goals Vs Points Scored",col="blue")
+abline(Linear_Reg_model,col="Red")
+```
+
+```{r}
+#setting seed and dividing data set into train and test
+set.seed(1122)
+index <- sample(1:nrow(Nba_df), 250)
+train <- Nba_df[index, ]
+test <- Nba_df[-index, ]
+
+```
+
+C) Predictors choosen --> MIN,FG,FT
+
+I have choosen FT over FGA because FGA has high inter correlation with the other predictors.
+
+```{r}
+pairs.panels(train[,c(8,9,10,13,23)])
+plot(train$MIN,train$PTS,xlab = "Minutes Played",ylab = "Points Scored",main="Minutes Played Vs Points Scored",col="blue")
+plot(train$FG,train$PTS,xlab = "Field Goals",ylab = "Points Scored",main="Field Goals Vs Points Scored",col="blue")
+#plot(Nba_df$FGA,Nba_df$PTS,xlab = "Field Goals Attempted",ylab = "Points Scored",main="Field Goals Attempted Vs Points Scored",col="blue")
+plot(train$FT,train$PTS,xlab = "Free Throws made",ylab = "Points Scored",main="Free Throws made Vs Points Scored",col="blue")
+
+```
+
+
+d)
+
+Multiple Regression:
+
+```{r}
+Multi_Reg_model <- lm(PTS ~ MIN+FG+FT, data=train)
+summary(Multi_Reg_model)
+```
+
+
+```{r}
+anova(Multi_Reg_model)
+```
+
+
+Comment on the Model:
+
+1. Note that all the coefficients are positive. So that increase in any of the predictor has positive effect on the PTS(Response).
+
+2. Here R^2 is 0.979 which implies that 97.9% of the variance is captured by this model.
+
+3. Fstatistic >1 n=250 observations. Sothe model is good in predicting the response.
+
+4. RSE is 1.13 twice as lower compared to the linear regression model.This shows that the error will be very low while predicting the response.
+
+5. Probability values for the predictors is very low which implies that we have choosen the right predictors to predict the response accurately.
+
+6.From the results of the anova command we can infer that variance is high and probabily is low indicating that the model is good.
+
+
+e)
+
+```{r}
+#Residual Model Graph
+plot(Multi_Reg_model, 1)
+```
+
+The data points in the Residual plot are equally shared above and below the regression line.So that the residual error is minimised and the model is a good predictor of the response.
+
+
+f)
+
+```{r}
+# Histogram of the residual plot
+hist(Multi_Reg_model$residuals, xlab = "Model Residuals", 
+     main="NBA Residual Histogram") 
+x <- -7:7
+lines(x, 240*dnorm(x, 0, sd(Multi_Reg_model$residuals)), col=2)
+```
+
+```{r}
+library("moments")
+skewness(Multi_Reg_model$residuals)  #Right skewed So its not normally distributed.
+```
+ 
+The residuals do not look exactly like a Gaussian distribution; a bit Right skewed with skewness 0.896.
+
+g)
+
+Construction of the 
+
+```{r}
+predict_values <- predict.lm(Multi_Reg_model,test, interval="prediction")
+predict_values
+summary(predict_values)
+```
+
+
+Creation of data frame with predicted and the actual test data response.
+
+```{r}
+data1 <- cbind(test$PTS,predict_values)
+New_data <-data1[,c(2,1)]
+colnames(New_data) <- c("Predicted_value", "Actual_Value")
+New_data <-data.frame(New_data)
+New_data
+```
+
+```{r}
+a <- New_data$Actual_Value == New_data$Predicted_value
+No_Of_Exact_Match <- sum(a) 
+cat(paste("Number of Exact matches : ",No_Of_Exact_Match))
+```
+
+Eventhough the number of exact matches are none the predicted and the actual response for the test data is very close to one another.
+
+
+h)
+
+```{r}
+resi_duals <- New_data$Actual_Value - New_data$Predicted_value
+resi_duals
+rss <- sum(resi_duals^2)
+rss
+```
+
+
+
+```{r}
+tss <-sum((New_data$Actual_Value - mean(New_data$Actual_Value))^2)
+tss
+```
+
+
+```{r}
+#Fstat
+n <- 19 # Number of observations
+p <- 3  # Nuber of Predictors.
+Fstat <- ((tss-rss)/p)/(rss/(n-p-1))
+Fstat  # F statistics
+```
+
+```{r}
+#RSE
+Rse <- sqrt(rss/(n-p-1))
+Rse
+```
+
